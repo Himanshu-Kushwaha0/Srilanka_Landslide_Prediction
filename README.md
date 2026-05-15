@@ -1,80 +1,104 @@
 # Sri Lanka Landslide Prediction
 
-![Project Logo](APP/landslide_app/static/bisag_logo.png)
+![Star Constellation](star_constellation.png)
 
-## Overview
+## Project Summary
 
-Sri Lanka Landslide Prediction is a GIS-powered risk analysis system built to evaluate landslide susceptibility, generate risk maps, and deliver an interactive web-based chatbot for natural-language exploration.
+Sri Lanka Landslide Prediction is a geographic information system (GIS) and machine learning-driven toolkit for assessing landslide susceptibility across Sri Lanka.
 
-This repository combines:
-- spatial data preprocessing and hazard modeling
-- raster/vector analysis for district-level susceptibility
-- visualization scripts and map generation
-- a Flask-based web app with chatbot support
-- optimization and documentation for fast local setup
+It includes:
+- spatial preprocessing of elevation, hydrology, land cover, and geology
+- district-level hazard and susceptibility mapping
+- risk visualizations and chart generation
+- a local Flask web app with chatbot-based risk exploration
+- support for local and cloud large language models (LLMs)
 
-## Key Features
+This repository is intended as both a research-ready analysis pipeline and a demo-ready web application.
 
-- Landslide susceptibility modeling for Sri Lanka
-- Automated preprocessing of topography, hydrology, and land cover
-- District-level risk mapping and chart generation
-- Interactive web dashboard with land‑slide chatbot assistance
-- Support for local and cloud LLM providers
-- Strong documentation and optimized project structure
+## Why this project exists
 
-## Repository Structure
+Landslides pose a serious threat in Sri Lanka, especially during monsoon seasons and in steep terrain. This project brings together GIS data, automated vulnerability analysis, and an interactive UI so users can:
+- compare district-level risk
+- inspect model outputs visually
+- query the system using natural language
+- extend the pipeline for new data, districts, or models
 
-- `APP/landslide_app/` — Flask app, static assets, and chatbot integration
-- `Data/` — raw geographic input data and GIS layers
-- `Data_Preprocessed/` — derived spatial outputs and intermediate files
-- `Output/` — generated maps, charts, and prediction outputs
-- `Scripts/` — main processing scripts for preprocessing, susceptibility, and visualization
-- `requirements.txt` — core Python dependencies
-- `requirements_enhanced.txt` — enhanced dependency set for optimized and chatbot-enabled installs
-- Documentation files: `SETUP_AND_DEPLOYMENT_GUIDE.md`, `QUICKSTART.md`, `API_DOCUMENTATION.md`, and more
+## What is included
 
-## Quick Start
+- `Scripts/` — main project pipeline for preprocessing, susceptibility modeling, and visualization
+- `APP/landslide_app/` — Flask web application and chatbot integration
+- `Data/` — raw GIS and raster input datasets
+- `Data_Preprocessed/` — cleaned and derived spatial outputs
+- `Output/` — generated maps, charts, and result files
+- `requirements.txt` — baseline dependencies
+- `requirements_enhanced.txt` — extended dependencies for AI/chatbot and optimization features
+- documentation with setup, API usage, and enhancement notes
 
-### 1) Clone the repository
+## Architecture
+
+1. Data ingestion
+2. Preprocessing and feature creation
+3. Susceptibility and risk analysis
+4. Map and chart generation
+5. Web app visualization and chatbot interaction
+
+## Repository layout
+
+- `APP/landslide_app/`
+  - `app.py` — Flask application entry point
+  - chatbot routes and API integration
+  - static map assets and templates
+- `Scripts/`
+  - `preprocessing.py` — raw data processing
+  - `phase1_susceptibility.py` — hazard analysis
+  - `visualization_seperate.py` — generate individual maps
+  - `visualization_merged.py` — combine visual outputs
+- `Data/` — original GIS sources and raster layers
+- `Data_Preprocessed/` — generated outputs used by analysis scripts
+- `Output/` — final visual maps and reports
+
+## Full Setup Guide
+
+### 1) Clone repository
 
 ```bash
 git clone https://github.com/Himanshu-Kushwaha0/Srilanka_Landslide_Prediction.git
 cd Srilanka_Landslide_Prediction
 ```
 
-### 2) Create and activate a Python virtual environment
+### 2) Create a Python virtual environment
 
 #### Windows (PowerShell)
 ```powershell
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip setuptools wheel
 ```
 
 #### Linux / macOS
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip setuptools wheel
 ```
 
 ### 3) Install dependencies
 
-For the base install:
+For the base project:
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-For the enhanced setup with chatbot and optimizations:
+For the full AI-enabled project:
 ```bash
 python -m pip install -r requirements_enhanced.txt
 ```
 
-## Run the Project
+> Use `requirements_enhanced.txt` if you want Ollama, Hugging Face, or OpenAI chatbot support.
 
-### Preprocessing and Analysis
+## Running the project
 
-Use the scripts in `Scripts/` to prepare data and generate outputs.
+### 4) Preprocess data and build outputs
 
 ```bash
 cd Scripts
@@ -84,68 +108,130 @@ python visualization_seperate.py
 python visualization_merged.py
 ```
 
-> Run these scripts in this order to ensure the project data pipeline completes successfully.
+These scripts should be executed in order to ensure the full data workflow completes.
 
-### Start the Web App
+### 5) Start the web application
 
 ```bash
 cd APP/landslide_app
 python app.py
 ```
 
-Open your browser at:
+Open:
 
 ```text
 http://localhost:5000
 ```
 
-## Chatbot Support
+## Chatbot and Ollama instructions
 
-The web application includes a chatbot interface for asking questions like:
-- "What is landslide risk for Kandy?"
-- "How was this susceptibility map generated?"
-- "Which districts are most vulnerable?"
+This project supports a natural-language chatbot on the web app.
 
-### Supported providers
-- Mock response mode (default)
-- Ollama (local LLM)
-- Hugging Face
-- OpenAI
+### Option 1: Mock chatbot mode (default)
 
-See `CHATBOT_INTEGRATION_GUIDE.md` for setup details.
+No extra model setup is needed. It works for local testing and interface validation.
 
-## Recommended Workflow
+### Option 2: Local Ollama LLM
 
-1. Prepare your environment and install dependencies.
-2. Run preprocessing and susceptibility scripts.
-3. Generate visualizations.
-4. Launch the app and review maps in the browser.
-5. Use the chatbot for interactive insights.
+1. Install Ollama from https://ollama.ai
+2. Start the Ollama service
+3. Pull a model:
 
-## Important Notes
+```bash
+ollama pull mistral-7b
+```
 
-- This repository is designed for local evaluation and visualization.
-- Large GIS or raster datasets may increase runtime and storage needs.
-- If you have missing data, review `Scripts/paths_config.py` to update dataset paths.
+4. Serve the model if not already running:
 
-## Additional Documentation
+```bash
+ollama serve
+```
 
-- `SETUP_AND_DEPLOYMENT_GUIDE.md` — full setup instructions
-- `QUICKSTART.md` — fast project onboarding
-- `API_DOCUMENTATION.md` — API endpoints and usage
-- `MANIFEST_AND_CHECKLIST.md` — project manifest and tracking
-- `OPTIMIZATION_PLAN.md` — performance improvements and strategy
+5. Configure the web app to use Ollama
+
+Update the chatbot configuration in `APP/landslide_app/app.py` or `chatbot_integration` settings to use:
+- provider: `ollama`
+- model: `mistral-7b`
+- URL: `http://localhost:11434`
+
+Example:
+
+```python
+configure_chatbot({
+    'provider': 'ollama',
+    'ollama_url': 'http://localhost:11434',
+    'ollama_model': 'mistral-7b'
+})
+```
+
+### Option 3: Hugging Face
+
+1. Create a Hugging Face account
+2. Generate an API token
+3. Set environment variable:
+
+```bash
+export HF_API_KEY='your_token_here'
+```
+
+4. Use a Hugging Face model like:
+
+```python
+configure_chatbot({
+    'provider': 'huggingface',
+    'hf_model': 'mistralai/Mistral-7B-Instruct-v0.1'
+})
+```
+
+### Option 4: OpenAI
+
+1. Set your OpenAI key:
+
+```bash
+export OPENAI_API_KEY='sk_your_key_here'
+```
+
+2. Configure the app to use OpenAI provider.
+
+## What users can do with this project
+
+- run data preprocessing and GIS modeling locally
+- generate district-based landslide susceptibility maps
+- visualize risk outputs and charts
+- use a chatbot to ask questions about results
+- extend the app with new datasets, districts, or risk factors
+
+## Important details
+
+- The project is designed for local analysis and demonstration.
+- GIS data volumes may be large; keep raw datasets outside Git if possible.
+- If scripts fail due to missing inputs, update paths in `Scripts/paths_config.py`.
+- The web app displays results from the processed `Data_Preprocessed/` and `Output/` folders.
+
+## Documentation index
+
+- `SETUP_AND_DEPLOYMENT_GUIDE.md` — complete installation and deployment steps
+- `QUICKSTART.md` — rapid onboarding
+- `API_DOCUMENTATION.md` — web API and chatbot endpoints
+- `CHATBOT_INTEGRATION_GUIDE.md` — chatbot provider configuration
+- `MANIFEST_AND_CHECKLIST.md` — project contents and tracking
+- `OPTIMIZATION_PLAN.md` — performance improvements and design notes
 
 ## Troubleshooting
 
-- If the app fails to start, confirm the virtual environment is active.
-- Ensure required packages are installed from `requirements.txt` or `requirements_enhanced.txt`.
-- For GIS errors, verify source files are present in `Data/` and `Data_Preprocessed/`.
+- Activate `.venv` before running scripts
+- Install missing dependencies with `pip install -r requirements_enhanced.txt`
+- Confirm Ollama is running for local chatbot mode
+- Verify that required GIS files exist in `Data/` or `Data_Preprocessed/`
 
 ## Contribution
 
-Contributions are welcome. If you want to extend the project, add new district analysis, improve chatbot responses, or enhance visualizations, please create a branch and submit a pull request.
+Contributions, bug fixes, and enhancements are welcome. Suggested improvements:
+- add new district or hazard features
+- add more interactive visual dashboards
+- improve AI chatbot responses
+- add deployment scripts for Docker or cloud
 
 ---
 
-Made for Sri Lanka landslide risk exploration with GIS modeling, predictive mapping, and interactive explanation.
+This repository is a complete landslide risk exploration toolkit for Sri Lanka, blending GIS analysis, predictive workflows, and AI-assisted interpretation.
