@@ -1,6 +1,6 @@
 # Sri Lanka Landslide Prediction
 
-![Star Constellation](star_constellation.png)
+![Project Clock Image](APP/landslide_app/static/clock_image.png)
 
 ## Project Summary
 
