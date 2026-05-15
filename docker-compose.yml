@@ -1,0 +1,107 @@
+# docker-compose.yml
+# Complete stack for Landslide Prediction System
+# Includes app, optional Ollama, Redis caching, etc.
+
+version: '3.8'
+
+services:
+  # ═══════════════════════════════════════════════════════════════
+  # Main Application
+  # ═══════════════════════════════════════════════════════════════
+  app:
+    build: .
+    container_name: landslide-prediction-app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - CHATBOT_PROVIDER=mock  # Change to "ollama" to use Ollama service
+      - OLLAMA_URL=http://ollama:11434
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+      - ./cache:/app/cache
+    depends_on:
+      - redis
+      # - ollama  # Uncomment to use Ollama
+    networks:
+      - landslide-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/chatbot/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ═══════════════════════════════════════════════════════════════
+  # Redis (Optional - for caching)
+  # ═══════════════════════════════════════════════════════════════
+  redis:
+    image: redis:7-alpine
+    container_name: landslide-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - landslide-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # ═══════════════════════════════════════════════════════════════
+  # Ollama (Optional - for local LLM)
+  # ═══════════════════════════════════════════════════════════════
+  # Uncomment this section and the app dependency to enable Ollama
+  #
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: landslide-ollama
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama-data:/root/.ollama
+  #   networks:
+  #     - landslide-network
+  #   restart: unless-stopped
+  #   environment:
+  #     - OLLAMA_HOST=0.0.0.0:11434
+  #   # Pull model on startup (optional)
+  #   # entrypoint: /bin/sh -c "ollama pull mistral-7b && ollama serve"
+
+  # ═══════════════════════════════════════════════════════════════
+  # PostgreSQL with PostGIS (Optional - for data storage)
+  # ═══════════════════════════════════════════════════════════════
+  # Uncomment this section if you want to use PostGIS for data
+  #
+  # postgres:
+  #   image: postgis/postgis:15-3.3
+  #   container_name: landslide-postgres
+  #   environment:
+  #     POSTGRES_USER: landslide
+  #     POSTGRES_PASSWORD: your-password
+  #     POSTGRES_DB: landslide_db
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   networks:
+  #     - landslide-network
+  #   restart: unless-stopped
+
+# ═══════════════════════════════════════════════════════════════
+# Networks
+# ═══════════════════════════════════════════════════════════════
+networks:
+  landslide-network:
+    driver: bridge
+
+# ═══════════════════════════════════════════════════════════════
+# Volumes
+# ═══════════════════════════════════════════════════════════════
+volumes:
+  redis-data:
+  # ollama-data:
+  # postgres-data:
+

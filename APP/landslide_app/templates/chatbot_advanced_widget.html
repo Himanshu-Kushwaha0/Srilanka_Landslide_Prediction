@@ -1,0 +1,796 @@
+<!-- Advanced Chatbot Widget with Risk Analysis -->
+<!-- Place this in your Flask base template -->
+
+<div id="chatbot-restore-btn" class="show" onclick="chatbotRestore();" title="Open Chat">💬</div>
+
+<div id="chatbot-container" class="chatbot-container">
+    <!-- Header -->
+    <div class="chatbot-header">
+        <div class="chatbot-title">
+            <span class="chatbot-icon">💬</span>
+            Ask Me Anything
+        </div>
+        <button id="chatbot-minimize" class="chatbot-minimize" onclick="chatbotToggle()">−</button>
+    </div>
+    
+    <!-- Messages Area -->
+    <div id="chatbot-messages" class="chatbot-messages">
+        <div class="chatbot-welcome">
+            <h3>Landslide Risk Analysis</h3>
+            <p>Ask questions about landslide prediction, risk assessment, precautions, and mitigation strategies.</p>
+            <div class="suggested-questions">
+                <strong>Quick questions:</strong>
+                <div id="chatbot-suggestions" class="suggestion-buttons"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Risk Analysis Display -->
+    <div id="chatbot-risk-panel" class="chatbot-risk-panel" style="display:none;">
+        <div class="risk-header">Risk Assessment</div>
+        <div class="risk-content">
+            <div class="risk-level" id="risk-level"></div>
+            <div class="risk-score" id="risk-score"></div>
+            <div class="risk-urgency" id="risk-urgency"></div>
+            
+            <div class="risk-section">
+                <strong>⚠️ Threats:</strong>
+                <ul id="risk-threats"></ul>
+            </div>
+            
+            <div class="risk-section">
+                <strong>✅ Precautions:</strong>
+                <ul id="risk-precautions"></ul>
+            </div>
+            
+            <div class="risk-section">
+                <strong>🔧 Solutions:</strong>
+                <ul id="risk-solutions"></ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Input Area -->
+    <div class="chatbot-input-area">
+        <input type="text" id="chatbot-input" class="chatbot-input" 
+               placeholder="Ask about risks, precautions, solutions..." 
+               onkeypress="if(event.key==='Enter') chatbotSendMessage()">
+        <button id="chatbot-send" class="chatbot-send" onclick="chatbotSendMessage()">
+            <span class="send-icon">→</span>
+        </button>
+    </div>
+</div>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════ */
+/* CHATBOT CONTAINER STYLES */
+/* ═══════════════════════════════════════════════════════════════ */
+
+.chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 420px;
+    height: 650px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .chatbot-container {
+        width: 100vw;
+        height: 100vh;
+        bottom: 0;
+        right: 0;
+        border-radius: 0;
+        max-width: none;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* HEADER */
+/* ─────────────────────────────────────────────────────────────── */
+
+.chatbot-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 16px 20px;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.chatbot-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.chatbot-icon {
+    font-size: 20px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.chatbot-minimize {
+    background: rgba(255,255,255,0.25);
+    border: 2px solid rgba(255,255,255,0.5);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.chatbot-minimize:hover {
+    background: rgba(255,255,255,0.4);
+    transform: scale(1.15);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.chatbot-minimize:active {
+    transform: scale(0.95);
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* MINIMIZE BUTTON FLOATING */
+/* ─────────────────────────────────────────────────────────────── */
+
+#chatbot-restore-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    border: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.5);
+    z-index: 9998;
+    font-size: 28px;
+    color: white;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+    padding: 0;
+}
+
+#chatbot-restore-btn:hover {
+    transform: scale(1.15);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.7);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* MESSAGES AREA */
+/* ─────────────────────────────────────────────────────────────── */
+
+.chatbot-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chatbot-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chatbot-messages::-webkit-scrollbar-track {
+    background: #e0e0e0;
+}
+
+.chatbot-messages::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 3px;
+}
+
+.chatbot-welcome {
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.chatbot-welcome h3 {
+    margin: 0 0 10px 0;
+    color: #667eea;
+    font-size: 18px;
+}
+
+.chatbot-welcome p {
+    margin: 0 0 15px 0;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Suggested Questions */
+.suggested-questions {
+    text-align: left;
+    background: #f0f4ff;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.suggested-questions strong {
+    color: #333;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.suggestion-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+}
+
+.suggestion-btn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #333;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+.suggestion-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: translateX(4px);
+}
+
+/* Messages */
+.message {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message.bot {
+    justify-content: flex-start;
+}
+
+.message-content {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.message.user .message-content {
+    background: #667eea;
+    color: white;
+    border-radius: 12px 2px 12px 12px;
+}
+
+.message.bot .message-content {
+    background: white;
+    color: #333;
+    border-radius: 2px 12px 12px 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 10px 14px;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #667eea;
+    animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.6;
+    }
+    30% {
+        transform: translateY(-10px);
+        opacity: 1;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* RISK ANALYSIS PANEL */
+/* ─────────────────────────────────────────────────────────────── */
+
+.chatbot-risk-panel {
+    background: white;
+    border-top: 1px solid #eee;
+    padding: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 0 0 15px 15px;
+}
+
+.risk-header {
+    font-weight: 600;
+    color: #667eea;
+    font-size: 13px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.risk-content {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.risk-level {
+    padding: 6px 0;
+    font-weight: 600;
+    color: #333;
+}
+
+.risk-score {
+    padding: 4px 0;
+    color: #666;
+    font-size: 11px;
+}
+
+.risk-urgency {
+    padding: 4px 0;
+    color: #c0392b;
+    font-weight: 500;
+}
+
+.risk-section {
+    margin: 8px 0;
+    padding: 6px 0;
+}
+
+.risk-section strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.risk-section ul {
+    margin: 0;
+    padding-left: 16px;
+    list-style: none;
+}
+
+.risk-section li {
+    margin-bottom: 3px;
+    color: #666;
+    font-size: 11px;
+}
+
+.risk-section li:before {
+    content: "• ";
+    color: #667eea;
+    font-weight: bold;
+    margin-right: 4px;
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* INPUT AREA */
+/* ─────────────────────────────────────────────────────────────── */
+
+.chatbot-input-area {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    background: white;
+    border-radius: 0 0 15px 15px;
+    border-top: 1px solid #eee;
+}
+
+.chatbot-input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+}
+
+.chatbot-input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.chatbot-input::placeholder {
+    color: #999;
+}
+
+.chatbot-send {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.chatbot-send:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.chatbot-send:active {
+    transform: scale(0.95);
+}
+
+.send-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.chatbot-send:hover .send-icon {
+    transform: translateX(2px);
+}
+
+/* ─────────────────────────────────────────────────────────────── */
+/* RESPONSIVE */
+/* ─────────────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+    .chatbot-container {
+        width: 100vw;
+        height: 100vh;
+    }
+    
+    .message-content {
+        max-width: 90%;
+    }
+    
+    .suggestion-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CHATBOT JAVASCRIPT
+// ═══════════════════════════════════════════════════════════════
+
+const CHATBOT_API_BASE = '/api/chatbot';
+let chatbotIsOpen = true;
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    loadSuggestedQuestions();
+    // Ensure chatbot is visible on load
+    const container = document.querySelector('.chatbot-container');
+    const restoreBtn = document.getElementById('chatbot-restore-btn');
+    if (container) {
+        container.style.display = 'flex';
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
+    }
+    if (restoreBtn) {
+        restoreBtn.style.display = 'none';
+    }
+});
+
+// ─────────────────────────────────────────────────────────────
+// Toggle chatbot visibility with minimize functionality
+// ─────────────────────────────────────────────────────────────
+
+function chatbotToggle() {
+    chatbotIsOpen = !chatbotIsOpen;
+    const container = document.querySelector('.chatbot-container');
+    const minimizeBtn = document.getElementById('chatbot-minimize');
+    const restoreBtn = document.getElementById('chatbot-restore-btn');
+    
+    if (chatbotIsOpen) {
+        container.style.display = 'flex';
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
+        minimizeBtn.textContent = '−';
+        if (restoreBtn) restoreBtn.style.display = 'none';
+    } else {
+        container.style.display = 'none';
+        container.style.visibility = 'hidden';
+        container.style.opacity = '0';
+        minimizeBtn.textContent = '+';
+        if (restoreBtn) restoreBtn.style.display = 'flex';
+    }
+}
+
+function chatbotRestore() {
+    chatbotIsOpen = true;
+    const container = document.querySelector('.chatbot-container');
+    const minimizeBtn = document.getElementById('chatbot-minimize');
+    const restoreBtn = document.getElementById('chatbot-restore-btn');
+    container.style.display = 'flex';
+    container.style.visibility = 'visible';
+    container.style.opacity = '1';
+    minimizeBtn.textContent = '−';
+    if (restoreBtn) restoreBtn.style.display = 'none';
+    document.getElementById('chatbot-input').focus();
+}
+
+// No need for updateRestoreButton() anymore
+
+// ─────────────────────────────────────────────────────────────
+// Load suggested questions
+// ─────────────────────────────────────────────────────────────
+
+async function loadSuggestedQuestions() {
+    try {
+        const response = await fetch(`${CHATBOT_API_BASE}/examples`);
+        const data = await response.json();
+        
+        const container = document.getElementById('chatbot-suggestions');
+        container.innerHTML = '';
+        
+        data.examples.slice(0, 5).forEach(question => {
+            const btn = document.createElement('button');
+            btn.className = 'suggestion-btn';
+            btn.textContent = question;
+            btn.onclick = () => chatbotSendMessage(question);
+            container.appendChild(btn);
+        });
+    } catch (error) {
+        console.error('Failed to load suggestions:', error);
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Send message
+// ─────────────────────────────────────────────────────────────
+
+async function chatbotSendMessage(suggestedMessage = null) {
+    const input = document.getElementById('chatbot-input');
+    const message = suggestedMessage || input.value.trim();
+    
+    if (!message) return;
+    
+    // Clear input
+    input.value = '';
+    
+    // Add user message to display
+    chatbotAddMessage(message, 'user');
+    
+    // Show typing indicator
+    showTypingIndicator();
+    
+    try {
+        const response = await fetch(`${CHATBOT_API_BASE}/chat`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: message,
+                include_risk_analysis: true
+            })
+        });
+        
+        const data = await response.json();
+        
+        // Remove typing indicator
+        removeTypingIndicator();
+        
+        if (data.status === 'success') {
+            // Add bot response
+            chatbotAddMessage(data.response, 'bot');
+            
+            // Display risk analysis if available
+            if (data.risk_analysis) {
+                displayRiskAnalysis(data.risk_analysis);
+            } else {
+                document.getElementById('chatbot-risk-panel').style.display = 'none';
+            }
+        } else {
+            chatbotAddMessage(`Error: ${data.message}`, 'bot');
+        }
+    } catch (error) {
+        removeTypingIndicator();
+        chatbotAddMessage(`Connection error: ${error.message}`, 'bot');
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Add message to display
+// ─────────────────────────────────────────────────────────────
+
+function chatbotAddMessage(content, role) {
+    const messagesDiv = document.getElementById('chatbot-messages');
+    
+    // Remove welcome message if first message
+    const welcome = messagesDiv.querySelector('.chatbot-welcome');
+    if (welcome && role === 'user') {
+        welcome.remove();
+    }
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${role}`;
+    messageDiv.innerHTML = `
+        <div class="message-content">${escapeHtml(content)}</div>
+    `;
+    
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Typing indicator
+// ─────────────────────────────────────────────────────────────
+
+function showTypingIndicator() {
+    const messagesDiv = document.getElementById('chatbot-messages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message bot';
+    typingDiv.id = 'typing-indicator';
+    typingDiv.innerHTML = `
+        <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    `;
+    messagesDiv.appendChild(typingDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    const typing = document.getElementById('typing-indicator');
+    if (typing) typing.remove();
+}
+
+// ─────────────────────────────────────────────────────────────
+// Display risk analysis
+// ─────────────────────────────────────────────────────────────
+
+function displayRiskAnalysis(riskData) {
+    const panel = document.getElementById('chatbot-risk-panel');
+    
+    // Risk level
+    const riskLevelEl = document.getElementById('risk-level');
+    const levelText = riskData.risk_level.toUpperCase().replace('_', ' ');
+    const levelColor = getRiskColor(riskData.risk_level);
+    riskLevelEl.innerHTML = `
+        <span style="color: ${levelColor}; font-weight: 600;">● ${levelText}</span>
+    `;
+    
+    // Risk score
+    document.getElementById('risk-score').textContent = `Risk Score: ${riskData.probability}`;
+    
+    // Urgency
+    const urgencyText = ['Low', 'Low', 'Moderate', 'High', 'Critical'];
+    document.getElementById('risk-urgency').textContent = `Urgency: ${urgencyText[riskData.urgency] || 'Unknown'}`;
+    
+    // Threats
+    const threatsEl = document.getElementById('risk-threats');
+    threatsEl.innerHTML = riskData.threats
+        .slice(0, 3)
+        .map(t => `<li>${t}</li>`)
+        .join('');
+    
+    // Precautions
+    const precautionsEl = document.getElementById('risk-precautions');
+    precautionsEl.innerHTML = riskData.precautions
+        .slice(0, 3)
+        .map(p => `<li>${p}</li>`)
+        .join('');
+    
+    // Solutions
+    const solutionsEl = document.getElementById('risk-solutions');
+    solutionsEl.innerHTML = riskData.solutions
+        .slice(0, 3)
+        .map(s => `<li>${s}</li>`)
+        .join('');
+    
+    panel.style.display = 'block';
+}
+
+function getRiskColor(riskLevel) {
+    const colors = {
+        'low': '#2ecc71',
+        'moderate': '#f39c12',
+        'high': '#e67e22',
+        'very_high': '#c0392b'
+    };
+    return colors[riskLevel] || '#999';
+}
+
+// ─────────────────────────────────────────────────────────────
+// Utility functions
+// ─────────────────────────────────────────────────────────────
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+</script>

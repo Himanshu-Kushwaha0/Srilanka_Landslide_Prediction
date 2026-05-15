@@ -1,0 +1,125 @@
+# Enhanced requirements with optimization and chatbot features
+
+# Original GIS/Geospatial packages
+affine==2.4.0
+attrs==25.4.0
+branca==0.8.2
+certifi==2026.2.25
+charset-normalizer==3.4.4
+click==8.3.1
+click-plugins==1.1.1.2
+cligj==0.7.2
+contourpy==1.3.2
+cycler==0.12.1
+folium==0.20.0
+fonttools==4.61.1
+geopandas==1.1.2
+idna==3.11
+Jinja2==3.1.6
+joblib==1.5.3
+kiwisolver==1.4.9
+MarkupSafe==3.0.3
+matplotlib==3.10.8
+numpy==1.26.4
+packaging==26.0
+pandas==2.3.3
+pillow==12.1.1
+pyogrio==0.12.1
+pyparsing==3.3.2
+pyproj==3.7.1
+python-dateutil==2.9.0.post0
+pytz==2026.1.post1
+rasterio==1.4.4
+requests==2.32.5
+richdem==0.3.4
+scikit-learn==1.7.2
+scipy==1.15.3
+shapely==2.1.2
+six==1.17.0
+threadpoolctl==3.6.0
+tqdm==4.67.3
+tzdata==2025.3
+urllib3==2.6.3
+xyzservices==2025.11.0
+
+# ═══════════════════════════════════════════════════════════════════
+# OPTIMIZATION ENHANCEMENTS
+# ═══════════════════════════════════════════════════════════════════
+
+# Numba: JIT compilation for fast numerical code (10-50x speedup)
+numba>=0.59.0
+
+# Dask: Parallel computing for large arrays
+dask[dataframe,array]>=2024.1.0
+
+# PyArrow: Parquet support (50-80% file compression)
+pyarrow>=15.0.0
+
+# Optional: Redis for caching (comment out if not needed)
+# redis>=5.0.0
+# hiredis>=2.2.0
+
+# ═══════════════════════════════════════════════════════════════════
+# CHATBOT & LLM INTEGRATION
+# ═══════════════════════════════════════════════════════════════════
+
+# LangChain: LLM framework for RAG
+langchain>=0.1.0
+langchain-community>=0.0.10
+
+# Sentence transformers: Embeddings for RAG
+sentence-transformers>=2.2.2
+
+# Optional: Different LLM providers (install as needed)
+
+# For Ollama (self-hosted, local)
+# No additional packages needed - uses HTTP API
+
+# For HuggingFace Inference
+# huggingface-hub>=0.19.0
+
+# For OpenAI API
+# openai>=1.0.0
+
+# Optional: Vector databases for RAG
+# pinecone-client>=3.0.0
+# weaviate-client>=3.19.0
+# chromadb>=0.4.0
+
+# ═══════════════════════════════════════════════════════════════════
+# WEB APPLICATION ENHANCEMENTS
+# ═══════════════════════════════════════════════════════════════════
+
+# Flask is already in use
+
+# WebSocket support for real-time chat
+python-socketio>=5.10.0
+python-engineio>=4.8.0
+
+# Async support
+aiohttp>=3.9.0
+asyncio-contextmanager>=1.0.0
+
+# Task queue (optional for background jobs)
+celery>=5.3.0
+redis>=5.0.0
+
+# ═══════════════════════════════════════════════════════════════════
+# PERFORMANCE MONITORING (OPTIONAL)
+# ═══════════════════════════════════════════════════════════════════
+
+# Memory profiling
+memory-profiler>=0.61.0
+
+# Performance monitoring
+psutil>=5.9.0
+
+# ═══════════════════════════════════════════════════════════════════
+# DEVELOPMENT & TESTING
+# ═══════════════════════════════════════════════════════════════════
+
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+flake8>=6.0.0
+

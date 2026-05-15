@@ -1,0 +1,414 @@
+I read your whole workflow. You actually built **almost a full scientific landslide modelling pipeline already**, but it got messy during debugging. Let me summarize the **clean end-to-end approach** based on everything you developed.
+
+This is the **correct pipeline logically and scientifically**.
+
+---
+
+# End-to-End Landslide Prediction Pipeline
+
+## Phase 0 — Data Preparation
+
+### 1. Administrative Boundary
+
+Input
+
+* Village / district shapefile
+
+Used for
+
+* Clipping all rasters per district
+
+---
+
+### 2. DEM Data
+
+Input
+
+* DEM (SRTM / ALOS)
+
+Derived Topographic Layers
+
+* Elevation
+* Slope
+* Aspect
+* Plan Curvature
+* Profile Curvature
+* TWI
+* TRI
+* SPI
+
+Output
+
+```
+Topo_Output/<District>/
+    slope.tif
+    aspect.tif
+    twi.tif
+    tri.tif
+    spi.tif
+    curvature.tif
+```
+
+---
+
+### 3. Hydrological Derivatives (from DEM)
+
+Computed using **flow routing**
+
+Method
+
+* **MFD for accumulation**
+* **D8 for flow direction**
+
+Outputs
+
+* Flow Direction
+* Flow Accumulation
+* Drainage Density
+
+```
+Hydro_Output/<District>/
+    flow_direction.tif
+    flow_accumulation.tif
+    drainage_density.tif
+```
+
+---
+
+### 4. Soil Data
+
+Source
+
+* SoilGrids (Clay / Sand / Silt)
+
+Steps
+
+1. Clip per district
+2. Convert g/kg → %
+
+```
+Soil_Output/<District>/
+    clay.tif
+    sand.tif
+    silt.tif
+```
+
+Derived
+
+* Hydrologic Soil Group (HSG)
+
+---
+
+### 5. Land Cover Data
+
+Input
+
+* LULC shapefile
+
+Steps
+
+* Rasterize to DEM grid
+
+Output
+
+```
+lulc_raster.tif
+```
+
+---
+
+### 6. Geological / Structural Data
+
+Input
+
+* Fault lines
+* Rivers
+
+Steps
+
+1. Clip per district
+2. Compute distance raster
+
+Outputs
+
+```
+Vector_Output/<District>/
+    dist_to_fault.tif
+    dist_to_river.tif
+```
+
+---
+
+# Phase 1 — Static Susceptibility Mapping
+
+Goal
+
+Identify **terrain prone to landslides**
+without rainfall trigger.
+
+Method
+
+**Hybrid Physics + MCE approach**
+
+Components
+
+### A. Infinite Slope Stability Model (SINMAP)
+
+Factor of Safety
+
+[
+FS =
+\frac{
+C + \cos^2\beta (\rho_s - m\rho_w) z \tan\phi
+}{
+\rho_s z \sin\beta \cos\beta
+}
+]
+
+Inputs
+
+* slope
+* TWI (wetness proxy)
+* soil cohesion
+* friction angle
+* soil density
+* soil depth
+
+Output
+
+```
+factor_of_safety.tif
+```
+
+---
+
+### B. Geomorphic Susceptibility Factors
+
+Used because FS alone under dry conditions shows most terrain stable.
+
+Factors used
+
+* Slope
+* TWI
+* Curvature
+* SPI
+* Drainage Density
+* TRI
+* LULC
+* Distance to Fault
+* Distance to River
+* Factor of Safety
+
+---
+
+### C. Multi-Criteria Evaluation (AHP)
+
+Weighted overlay
+
+Example weights
+
+| Factor            | Weight |
+| ----------------- | ------ |
+| Slope             | 0.22   |
+| TWI               | 0.16   |
+| Curvature         | 0.12   |
+| SPI               | 0.10   |
+| Drainage Density  | 0.09   |
+| Distance to Fault | 0.07   |
+| Distance to River | 0.06   |
+| LULC              | 0.06   |
+| TRI               | 0.06   |
+| FS                | 0.06   |
+
+Output
+
+```
+susceptibility_score.tif
+```
+
+---
+
+### D. Final Susceptibility Classes
+
+Classification
+
+```
+1 Very Low
+2 Low
+3 Moderate
+4 High
+5 Very High
+```
+
+Output
+
+```
+susceptibility_class.tif
+```
+
+---
+
+# Phase 2 — Dynamic Landslide Hazard (Weather Integration)
+
+This converts **static susceptibility → real hazard prediction**
+
+Input
+
+NASA POWER weather
+
+```
+PRECTOTCORR (mm/day)
+```
+
+Daily precipitation.
+
+---
+
+## Step 1 — Rainfall Interpolation
+
+Village precipitation → raster
+
+Method
+
+```
+IDW interpolation
+```
+
+Output
+
+```
+precipitation_day.tif
+```
+
+---
+
+## Step 2 — Runoff Modeling
+
+Method
+
+**SCS Curve Number Model**
+
+[
+S = \frac{25400}{CN} - 254
+]
+
+[
+Q = \frac{(P - 0.2S)^2}{P + 0.8S}
+]
+
+Inputs
+
+* precipitation raster
+* CN raster (from soil + LULC)
+
+Output
+
+```
+runoff_day.tif
+```
+
+---
+
+## Step 3 — Update Saturation
+
+Rainfall increases saturation ratio
+
+```
+m_dynamic = runoff / soil_storage
+```
+
+Used in **FS calculation**
+
+---
+
+## Step 4 — Dynamic Factor of Safety
+
+Recalculate FS daily
+
+```
+FS_dynamic
+```
+
+Output
+
+```
+FS_day.tif
+```
+
+---
+
+## Step 5 — Dynamic Hazard Map
+
+Combine
+
+```
+Susceptibility × Dynamic FS × Rainfall
+```
+
+Output
+
+```
+hazard_day.tif
+```
+
+---
+
+# Final Outputs
+
+Static
+
+```
+susceptibility_class.tif
+```
+
+Dynamic
+
+```
+hazard_YYYY_MM_DD.tif
+```
+
+---
+
+# Final System
+
+Pipeline becomes
+
+```
+DEM
+ ↓
+Topographic layers
+ ↓
+Hydrological layers
+ ↓
+Soil + LULC + Fault + River
+ ↓
+Static Susceptibility Map
+ ↓
+Weather Data (Daily Rainfall)
+ ↓
+Runoff Model
+ ↓
+Dynamic FS
+ ↓
+Daily Landslide Hazard Map
+```
+
+---
+
+# What You Built (Honestly)
+
+You actually built a **research-level landslide framework**:
+
+✔ Terrain modelling
+✔ Hydrology modelling
+✔ Soil mechanics
+✔ SCS runoff modelling
+✔ Weather integration
+✔ Dynamic hazard prediction
+
+This is **exactly how many real landslide early warning systems are designed**.
+
+---
+
+If you want, I can also show you the **one big mistake almost every landslide research makes (and how to avoid it in your model)**. It will improve your results **a lot**.
+

@@ -1,0 +1,16 @@
+{
+  "session_id": "b6efe164-6873-4c6f-81fd-e6d5e2f18376",
+  "history": [
+    {
+      "role": "user",
+      "content": "What is landslide risk?",
+      "timestamp": "2026-05-12T17:41:23.447848"
+    },
+    {
+      "role": "assistant",
+      "content": "\nLANDSLIDE THREATS & HAZARDS\n\nNATURAL TRIGGERING FACTORS:\n\u2022 Intense rainfall saturates soil and reduces shear strength\n\u2022 Steep slopes (>35\u00b0) are unstable, >45\u00b0 is critical\n\u2022 High groundwater pressure destabilizes slopes\n\u2022 Weak soil/rock with poor material strength\n\u2022 Geological faults create planes of weakness\n\nHUMAN FACTORS ACCELERATING LANDSLIDES:\n\u2022 Deforestation removes root reinforcement\n\u2022 Excavation removes slope support\n\u2022 Construction adds weight and alters water flow\n\u2022 Poor agricultural practices remove vegetation\n\u2022 Groundwater extraction reduces support\n\nPOTENTIAL CONSEQUENCES:\n\u2022 Settlement damage - Homes and infrastructure buried\n\u2022 Road destruction - Transport routes blocked\n\u2022 Power disruption - Loss of electricity services\n\u2022 Water contamination - Debris affects water supplies\n\u2022 Debris flows - Fast-moving debris reaches villages\n\u2022 Human casualties - Deaths and injuries\n\nSECONDARY HAZARDS:\n\u2022 Rock falls from exposed cliffs\n\u2022 Debris flows in valleys\n\u2022 Flash floods from blocked drainage\n\u2022 Landslide-triggered flooding\n\nVULNERABLE POPULATIONS:\n\u2022 People in hillside settlements\n\u2022 Tea and rubber plantation workers\n\u2022 Remote village communities\n\u2022 Elderly and disabled individuals\n        ",
+      "timestamp": "2026-05-12T17:41:27.496097"
+    }
+  ],
+  "timestamp": "2026-05-12T17:41:27.496097"
+}

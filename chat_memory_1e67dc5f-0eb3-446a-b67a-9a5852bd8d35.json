@@ -1,0 +1,26 @@
+{
+  "session_id": "1e67dc5f-0eb3-446a-b67a-9a5852bd8d35",
+  "history": [
+    {
+      "role": "user",
+      "content": "Which areas have the highest landslide potential?",
+      "timestamp": "2026-05-13T11:45:28.118700"
+    },
+    {
+      "role": "assistant",
+      "content": "\n\ud83d\uddfa\ufe0f **Landslide Risk Across Sri Lanka Districts**\n\nLet me break down the riskiness:\n\n**\ud83d\udd34 VERY HIGH RISK (Critical):**\n- **Kandy** - Central highlands, steep slopes, high population\n- **Nuwara Eliya** - Highest elevation, intense rainfall\n- **Badulla** - Eastern highlands, frequent events\n\n**\ud83d\udfe0 HIGH RISK (Serious):**\n- **Kegalle** - Central region, steep terrain\n- **Matara** - Southern slopes, heavy monsoon\n- **Ratnapura** - Gem mining areas, excavations\n- **Colombo** - Urban slopes (upland areas)\n\n**\ud83d\udfe1 MODERATE RISK (Watch):**\n- **Galle** - Southwestern slopes\n- **Kurunegala** - Northern uplands\n- **Moneragala** - Some steep zones\n\n**\ud83d\udfe2 LOW RISK (Safe):**\n- **Jaffna** - Flat coastal terrain\n- **Mullaitivu** - Lagoon areas\n- **Batticaloa** - Coastal plains\n\n**Key Insight:**\nHigh risk concentrates in **central highlands** (where terrain is steep).\nLow risk in **northern/eastern coastal areas** (flat terrain).\n\n**Risk Hotspots Within Districts:**\n- Kandy: Peradeniya corridor, Cinnamon Gardens\n- Nuwara Eliya: Ambewela plateau\n- Badulla: Haputale tea zone\n- Colombo: Slopes in Nugegoda, upland areas\n\n**Monsoon Impact by Region:**\n- Southwest monsoon (May-Sept): Affects western and central regions MOST\n- Northeast monsoon (Dec-Feb): Affects eastern regions\n- Dry season (Feb-April): ALL areas safer\n\n**What's Your Area?**\nTell me which district you're interested in, and I can give you specific insights about:\n\u2022 Local risk factors\n\u2022 Seasonal patterns\n\u2022 Mitigation strategies\n\u2022 Community preparedness\n        ",
+      "timestamp": "2026-05-13T11:45:28.121236"
+    },
+    {
+      "role": "user",
+      "content": "kandy",
+      "timestamp": "2026-05-13T11:45:59.186876"
+    },
+    {
+      "role": "assistant",
+      "content": "\n\ud83d\udd34 **Kandy District - VERY HIGH RISK**\n\nKandy is one of the most landslide-prone areas in Sri Lanka. Here's what you need to know:\n\n**Why is it so risky?**\n- Central highlands location with steep slopes (25-40\u00b0)\n- Heavy rainfall during two monsoon seasons: May-Sept and Dec-Feb\n- Elevation 800-2000m with dense settlements in vulnerable valleys\n- Tea plantations on steep terrain\n- Rapid urbanization on hillsides\n\n**Key Risk Factors:**\n\ud83d\udd39 Steep slopes amplify gravity effects\n\ud83d\udd39 High groundwater during monsoon season\n\ud83d\udd39 Multiple rainfall triggers throughout the year\n\ud83d\udd39 Population density in at-risk areas\n\n**What should people do?**\n- Stay alert during monsoon seasons (especially June-August)\n- Know evacuation routes from your home\n- Monitor official weather warnings\n- Avoid building new structures on slopes >35\u00b0\n- Maintain drainage systems in communities\n\n**Questions to explore:**\n\u2022 Want to know what precautions to take?\n\u2022 Curious about warning signs?\n\u2022 Interested in specific areas within Kandy?\n            ",
+      "timestamp": "2026-05-13T11:45:59.186876"
+    }
+  ],
+  "timestamp": "2026-05-13T11:45:59.186876"
+}
