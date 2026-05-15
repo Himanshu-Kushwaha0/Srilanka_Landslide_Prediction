@@ -100,3 +100,6 @@ Thumbs.db
 models/
 ollama/
 
+# Chat history and session memory
+chat_memory_*.json
+
